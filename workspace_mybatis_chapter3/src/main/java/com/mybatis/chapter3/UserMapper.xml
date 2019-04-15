@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mybatis.chapter3.UserMapper">
+
+
+
+    <!--自动映射-->
+    <select id="selectUserAndRoleById" resultType="com.mybatis.chapter3.SysUser">
+        select u.id,
+        u.user_name userName,
+        u.user_password userPassword,
+        u.user_email userEmail,
+        u.user_info userInfo,
+        u.head_img headImg,
+        u.create_time create_time,
+        <!--内部类的写法-->
+        r.id "role.id",
+        r.role_name "role.roleName",
+        r.enabled "role.enabled",
+        r.create_time "role.create_time",
+        r.create_by "role.create_by"
+        from sys_user u
+        inner join sys_user_role ur on u.id = ur.user_id
+        inner join sys_role r on ur.role_id = r.id
+        where u.id = #{id}
+    </select>
+
+    <select id="selectUserAndRoleById2" resultMap="userRoleMap">
+        select u.id,
+        u.user_name,
+        u.user_password,
+        u.user_email,
+        u.user_info,
+        u.head_img,
+        u.create_time,
+        <!--内部类的写法-->
+        r.id role_id,
+        r.role_name role_role_Name,
+        r.enabled role_enabled,
+        r.create_time role_create_time,
+        r.create_by role_create_by
+        from sys_user u
+        inner join sys_user_role ur on u.id = ur.user_id
+        inner join sys_role r on ur.role_id = r.id
+        where u.id = #{id}
+    </select>
+
+
+    <resultMap id="userMap" type="com.mybatis.chapter3.SysUser">
+        <id property="userName" column="user_name"/>
+        <result property="userName" column = "user_name"/>
+        <result property="userPassword" column = "user_password"/>
+        <result property="userEmail" column = "user_email"/>
+        <result property="userInfo" column = "user_info"/>
+        <result property="headImg" column = "head_img" jdbcType="BLOB"/>
+        <result property="create_time" column = "create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <resultMap id="roleMap" type="com.mybatis.chapter3.SysRole">
+        <id property="id" column="id"/>
+        <result property="role_Name" column = "role_Name"/>
+        <result property="enabled" column = "enabled"/>
+        <result property="create_by" column = "create_by"/>
+        <result property="create_time" column = "create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <resultMap id="userRoleMap" extends="userMap" type="com.mybatis.chapter3.SysUser">
+        <association property="role" columnPrefix="role_" resultMap="roleMap"/>
+    </resultMap>
+
+
+    <!--<resultMap id="userRoleMap" extends="userMap" type="com.mybatis.chapter3.SysUser">-->
+        <!--&lt;!&ndash;使用association标签&ndash;&gt;-->
+        <!--<association property="role" columnPrefix="role_"-->
+                     <!--javaType="com.mybatis.chapter3.SysRole">-->
+            <!--<result property="id" column = "id"/>-->
+            <!--<result property="role_Name" column = "Name"/>-->
+            <!--<result property="enabled" column = "enabled"/>-->
+            <!--<result property="create_by" column = "create_by"/>-->
+            <!--<result property="create_time" column = "create_time" jdbcType="TIMESTAMP"/>-->
+        <!--</association>-->
+    <!--</resultMap>-->
+
+</mapper>
