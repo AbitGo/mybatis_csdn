@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.DeviceTask.TaskMapper">
+    <insert id="addEffectiveDeviceTask" parameterType="map">
+        INSERT into task (DeviceCode,DeviceOwnner,DeviceUser,StartTime,EndTime,TaskCode,Description,Activity)
+        VALUES(#{DeviceCode},#{DeviceOwnner},#{DeviceUser},#{StartTime},#{EndTime},#{TaskCode},#{Desc},1)
+    </insert>
+
+    <insert id="addApplyDeviceTask" parameterType="map">
+        INSERT into task (DeviceCode,DeviceOwnner,DeviceUser,StartTime,EndTime,TaskCode,Description,Activity)
+        VALUES(#{DeviceCode},#{DeviceOwnner},#{DeviceUser},#{StartTime},#{EndTime},#{TaskCode},#{Desc},0)
+    </insert>
+
+
+    <select id="getEffectiveTask" parameterType="map" resultType="map">
+        select id,
+        (SELECT d.DeviceIMEI from device as d where d.DeviceCode = t.DeviceCode)as DeviceIMEI,t.DeviceCode,
+        (SELECT d.DeviceName from device as d where d.DeviceCode = t.DeviceCode)as DeviceName,
+        DeviceOwnner,DeviceUser,
+        StartTime,EndTime,
+        Description,TaskCode,
+        `Status`,Activity
+        from task as t
+        where (DeviceOwnner =#{UserCode} or DeviceUser=#{UserCode})
+        <choose>
+            <when test="Status!=null">
+                and `Status`=#{Status}
+            </when>
+        </choose>
+        and Activity =1
+        order by CreateTime desc
+    </select>
+
+    <select id="getTaskByCode" parameterType="string" resultType="map">
+        select id,DeviceCode,
+        DeviceOwnner,DeviceUser,
+        StartTime,EndTime,
+        TaskCode,`Status`,
+        Activity
+        from task where TaskCode = #{TaskCode}
+    </select>
+
+
+    <select id="getApplyDeviceTask" parameterType="map" resultType="map">
+        select id,DeviceCode,DeviceOwnner,DeviceUser,StartTime,EndTime,Description,TaskCode,`Status`,Activity ,
+        (select UserName from user as u where u.UserCode = t.DeviceUser) as DeviceUserName
+        from task as t
+        where 1=1
+        <choose>
+            <when test="UserCode!=null">
+                and (DeviceOwnner =#{UserCode} or DeviceUser=#{UserCode})
+            </when>
+        </choose>
+        and Activity =0
+        order by CreateTime desc
+    </select>
+
+    <update id="changeTaskApplyToEffective" parameterType="map">
+        <!--这个是获取有没有改变的-->
+        <selectKey keyProperty="id," resultType="short" order="AFTER">
+            SELECT id,StartTime,EndTime FROM task where id = #{TaskId} and Activity =1
+        </selectKey>
+        update task set Activity=1 where id=#{TaskId}
+    </update>
+
+
+    <update id="updateTaskByTaskCode" parameterType="map">
+        <foreach separator=";" collection="list" item="ChangeStatusPojos" index="index">
+            update task
+            <set>
+                Status =#{ChangeStatusPojos.Status}
+            </set>
+            where TaskCode=#{ChangeStatusPojos.TaskCode} and Activity =1
+        </foreach>
+    </update>
+
+    <insert id="addUnlockRecord" parameterType="map">
+        INSERT into record
+        (CreateTime,TaskCode,DeviceCode,PerformerCode,RecordCode,DeviceOwnner)
+        VALUES(#{CreateTime},#{TaskCode},#{DeviceCode},#{PerformerCode},#{RecordCode},#{DeviceOwnner})
+    </insert>
+
+    <select id="searchUnlockRecord" parameterType="map" resultType="map">
+        SELECT CreateTime,DeviceCode,TaskCode,
+        (select UserName from user where Usercode = DeviceOwnner)as DeviceOwnnerName,
+        (SELECT UserName from user where USerCode = PerformerCode)as PerformerName,
+        PerformerCode,DeviceOwnner,RecordResult
+        FROM record where 1=1
+        <choose>
+            <when test="UserCode!=null">
+                and (DeviceOwnner =#{UserCode} or PerformerCode=#{UserCode})
+            </when>
+        </choose>
+    </select>
+
+    <select id="SearchDianXinCodeByDeviceCode" parameterType="string" resultType="string">
+        select DianXinCode from device where DeviceCode=#{DeviceCode}
+    </select>
+
+</mapper>

@@ -1,0 +1,7 @@
+
+<!---用来屏蔽hpptclient中的debug日志的,这日志真是烦人-->
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/base.xml" />
+    <logger name="*" level="warn" />
+</configuration>

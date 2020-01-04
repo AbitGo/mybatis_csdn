@@ -1,0 +1,66 @@
+
+server:
+  port: 8181
+  tomcat:
+    max-connections: 1000
+    accesslog:
+      enabled: true
+#      directory: c:/logs
+    uri-encoding: utf-8
+    max-threads: 200
+
+loggin:
+
+#本地生产环境与测试环境统一
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/nbsystem?serverTimezone=UTC&allowMultiQueries=true
+    username: root
+    password: 123456
+  aop:
+    auto: true
+    proxy-target-class: false
+  redis:
+    database: 0
+    host: localhost
+    port: 6379
+    password:
+#
+#mybatis:
+#  config-location: classpath:mybatis/mybatis-config.xml
+
+#分页插件
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+  params:
+
+#  helper-dialect：指定数据库，不指定的话会默认自动检测数据库类型
+
+#  reasonable：是否启用分页合理化。
+#  如果启用，当pagenum<1时，会自动查询第一页的数据，
+#  当pagenum>pages时，自动查询最后一页数据；
+#  不启用的，以上两种情况都会返回空数据
+
+#  support-methods-arguments：默认值false，
+#  分页插件会从查询方法的参数值中，自动根据上面 params 配置的字段中取值，
+#  查找到合适的值时就会自动分页。
+
+#  params：用于从对象中根据属性名取值，
+#  可以配置 pageNum,pageSize,count,pageSizeZero,reasonable，
+#  不配置映射的用默认值， 默认值为
+#  pageNum=pageNum;
+#  pageSize=pageSize;
+#  count=countSql;
+#  reasonable=reasonable;
+#  pageSizeZero=pageSizeZero
+
+
+#写代码可以开,但是上线正式服务必关闭否则造成假死
+logging:
+  level:
+    com.user: info
+  file: MyLog.log
+  root: INFO
