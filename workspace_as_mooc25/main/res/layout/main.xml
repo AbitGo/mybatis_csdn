@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/bg_control"
+    android:orientation="vertical"
+    android:background="@color/sun"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:paddingTop="20dp"
+        android:paddingLeft="20dp"
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <Spinner
+            android:paddingLeft="20dp"
+            android:layout_weight="1"
+            android:id="@+id/spiner1_province"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+        </Spinner>
+        <Spinner
+            android:layout_weight="1"
+            android:paddingLeft="20dp"
+            android:id="@+id/spiner1_city"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"></Spinner>
+    </LinearLayout>
+    <TextView
+        android:paddingLeft="20dp"
+        android:paddingTop="20dp"
+        android:text="天气"
+        android:textSize="30dp"
+        android:id="@+id/tv_weather"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+
+</LinearLayout>
